@@ -51,6 +51,14 @@ public class EchoServer extends AbstractServer
     System.out.println("Message received: " + msg + " from " + client);
     this.sendToAllClients(msg);
   }
+
+  protected void clientConnected(ConnectionToClient client) {
+	  System.out.println("Client connected: " + client.toString());
+  }
+
+  synchronized protected void clientDisconnected(ConnectionToClient client) {
+	  System.out.println("Client disconnected: " + client.toString());
+  }
     
   /**
    * This method overrides the one in the superclass.  Called

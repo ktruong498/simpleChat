@@ -80,6 +80,20 @@ public class ChatClient extends AbstractClient
       quit();
     }
   }
+  /**
+   * Method that is called when the connection has been closed.
+   * Displays a message to the user and quits.
+   */
+  protected void connectionClosed() {
+	  clientUI.display("The sever has shut down. Quitting");
+	  quit();
+  }
+  
+  protected void connectionException(Exception exception) {
+	  clientUI.display("The server has unexpectedly shut down:" + exception.getMessage());
+	  quit();
+  }
+  
   
   /**
    * This method terminates the client.

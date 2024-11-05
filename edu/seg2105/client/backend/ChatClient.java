@@ -71,7 +71,20 @@ public class ChatClient extends AbstractClient
   {
     try
     {
-      sendToServer(message);
+		if (message.charAt(0) == '#') {
+			switch (message) {
+				case "#quit":
+					quit();
+					break;
+				case "#logoff":
+					
+
+				default:
+					break;
+			}
+		} else {
+			sendToServer(message);
+		}
     }
     catch(IOException e)
     {
@@ -86,12 +99,12 @@ public class ChatClient extends AbstractClient
    */
   protected void connectionClosed() {
 	  clientUI.display("The sever has shut down. Quitting");
-	  quit();
+	  System.exit(0);
   }
   
   protected void connectionException(Exception exception) {
 	  clientUI.display("The server has unexpectedly shut down:" + exception.getMessage());
-	  quit();
+	  System.exit(0);
   }
   
   

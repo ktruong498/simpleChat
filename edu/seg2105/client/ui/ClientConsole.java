@@ -104,7 +104,11 @@ public class ClientConsole implements ChatIF
    */
   public void display(String message) 
   {
-    System.out.println("> " + message);
+		if (message.charAt(0) == 'S') {
+			System.out.println(message);
+		} else {
+			System.out.println("> " + message);
+		}	
   }
 
   

@@ -72,13 +72,57 @@ public class ChatClient extends AbstractClient
     try
     {
 		if (message.charAt(0) == '#') {
-			switch (message) {
+			String[] args = message.split(" ");	
+			switch (args[0]) {
 				case "#quit":
 					quit();
+					clientUI.display("Quitting now");
+					System.exit(0);
 					break;
 				case "#logoff":
-					
-
+					clientUI.display("Logging off");
+					quit();
+					break;
+				case "#sethost":
+					if (isConnected()) {
+						clientUI.display("Please log off to change the host name");
+					} else {
+						try {
+							setHost(args[1]);
+							clientUI.display("Setting host to " + args[1]);
+						} catch (ArrayIndexOutOfBoundsException e) {
+							clientUI.display("Please enter a host name");
+						}
+					}
+					break;
+				case "#setport":
+					if (isConnected()) {
+						clientUI.display("Please log off to change the port name");
+					} else {
+						try {
+							setPort(Integer.parseInt(args[1]));
+							clientUI.display("Setting port to " + args[1]);
+						} catch (ArrayIndexOutOfBoundsException e) {
+							clientUI.display("Please enter a host port");
+						}
+					}
+					break;					
+				case "#login":
+					if (isConnected()){
+						clientUI.display("Already logged in");
+					} else {
+						try {
+							openConnection();
+						} catch ( IOException e) {
+							clientUI.display("Error when trying to open connection");
+						}
+					}
+					break;
+				case "#gethost":
+					clientUI.display(getHost());
+					break;
+				case "#getport":
+					clientUI.display(String.valueOf(getPort()));
 				default:
 					break;
 			}
@@ -98,8 +142,8 @@ public class ChatClient extends AbstractClient
    * Displays a message to the user and quits.
    */
   protected void connectionClosed() {
-	  clientUI.display("The sever has shut down. Quitting");
-	  System.exit(0);
+	  clientUI.display("The connection to the server has been closed");
+	  //System.exit(0);
   }
   
   protected void connectionException(Exception exception) {

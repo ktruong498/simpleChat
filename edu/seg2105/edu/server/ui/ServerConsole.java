@@ -31,7 +31,7 @@ public class ServerConsole implements ChatIF {
 	}
 
 	public void display(String message) {
-		if (message.charAt(0) == 'S') {
+		if (message.startsWith("SERVERMSG")) {
 			System.out.println(message);
 		} else {
 			System.out.println("> " + message);

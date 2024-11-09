@@ -27,6 +27,7 @@ public class ChatClient extends AbstractClient
    * the display method in the client.
    */
   ChatIF clientUI; 
+  String loginID;
 
   
   //Constructors ****************************************************
@@ -39,12 +40,16 @@ public class ChatClient extends AbstractClient
    * @param clientUI The interface type variable.
    */
   
-  public ChatClient(String host, int port, ChatIF clientUI) 
+  public ChatClient(String loginID, String host, int port, ChatIF clientUI) 
     throws IOException 
   {
+	 
     super(host, port); //Call the superclass constructor
     this.clientUI = clientUI;
+    this.loginID = loginID;
     openConnection();
+    Object msg = "#login " + loginID;
+    sendToServer(msg);
   }
 
   
@@ -58,7 +63,6 @@ public class ChatClient extends AbstractClient
   public void handleMessageFromServer(Object msg) 
   {
     clientUI.display(msg.toString());
-    
     
   }
 
@@ -81,7 +85,11 @@ public class ChatClient extends AbstractClient
 					break;
 				case "#logoff":
 					clientUI.display("Logging off");
-					quit();
+					try {
+						closeConnection();
+					} catch (IOException e) {
+						
+					}
 					break;
 				case "#sethost":
 					if (isConnected()) {
@@ -113,6 +121,8 @@ public class ChatClient extends AbstractClient
 					} else {
 						try {
 							openConnection();
+						    Object msg = "#login " + loginID;
+						    sendToServer(msg);
 						} catch ( IOException e) {
 							clientUI.display("Error when trying to open connection");
 						}
@@ -147,7 +157,7 @@ public class ChatClient extends AbstractClient
   }
   
   protected void connectionException(Exception exception) {
-	  clientUI.display("The server has unexpectedly shut down:" + exception.getMessage());
+	  clientUI.display("The server has shut down.");
 	  System.exit(0);
   }
   

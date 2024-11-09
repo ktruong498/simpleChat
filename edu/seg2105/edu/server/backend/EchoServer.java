@@ -55,13 +55,31 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
   {
-    serverUI.display("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+	serverUI.display("Message received: " + msg + " from " + client.getInfo("loginID"));
+	if (msg.toString().startsWith("#login")) {
+		if (client.getInfo("loginID") == null) {
+			String loginID = msg.toString().split(" ")[1];
+			client.setInfo("loginID", loginID);
+			String logonMsg = loginID + " has logged on.";
+			serverUI.display(logonMsg);
+			this.sendToAllClients(logonMsg);
+		} else {
+			try {
+				client.sendToClient("Eroor: Client tried to login twice. Closing connection.");
+				client.close();
+			} catch (IOException e) {
+				serverUI.display("Error when trying to close client");
+			}
+		}
+	} else {
+	    String sendMsg = client.getInfo("loginID") + "> " + msg;
+	    this.sendToAllClients(sendMsg);
+	}
   }
 
   public void handleMessageFromServerUI (String message) {
 		if (message.charAt(0) == '#') {
-			String[] args = message.split(" ");	
+			String[] args = message.split(" ");
 			switch (args[0]) {
 				case "#quit":
 					serverUI.display("Quitting server");
@@ -122,11 +140,11 @@ public class EchoServer extends AbstractServer
 		
   }
   protected void clientConnected(ConnectionToClient client) {
-	  serverUI.display("Client connected: " + client.toString());
+	  serverUI.display("A new client has connected.");
   }
 
   synchronized protected void clientDisconnected(ConnectionToClient client) {
-	  serverUI.display("Client disconnected: " + client.toString());
+	  serverUI.display(client.getInfo("loginID") + " has disconnected.");
   }
     
   /**
